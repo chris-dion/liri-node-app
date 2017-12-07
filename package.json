@@ -1,0 +1,26 @@
+{
+  "name": "liri-node-app",
+  "version": "1.0.0",
+  "description": "liri bot",
+  "main": "keys.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/chris-dion/liri-node-app.git"
+  },
+  "keywords": [
+    "liri",
+    "bot"
+  ],
+  "author": "Chris Dion",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/chris-dion/liri-node-app/issues"
+  },
+  "homepage": "https://github.com/chris-dion/liri-node-app#readme",
+  "dependencies": {
+    "node-spotify-api": "^1.0.7"
+  }
+}
