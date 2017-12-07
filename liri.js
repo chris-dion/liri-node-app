@@ -18,11 +18,57 @@ var spotify = new Spotify({
 
 var request = require('request');
 
+var fs = require("fs");
+
 var param = process.argv;
 
-var func_call = param [2];
 
-if (func_call === "my-tweets"){
+commands(param.splice(2, param.length));
+
+function commands(arr){
+	var func_call = arr[0];
+
+	if (func_call === "my-tweets"){
+		twitter();
+
+	}else if (func_call === "spotify-this-song"){
+		if(arr.length === 2){
+			var track = arr[1];
+			spotify_func(track);
+		}else{
+			var track = 'The Sign';
+			spotify_func(track);
+		}
+		 
+	}else if (func_call === "movie-this"){
+		if(arr.length === 2){
+			var title = arr[1];
+			movie(title);
+		}else{
+			var title = 'Mr. Nobody';
+			movie(title);
+		}
+
+	}else if (func_call === "do-what-it-says"){
+
+		fs.readFile("random.txt", "utf8", function(error, data){
+			if (error){
+				return console.log(error);
+			}
+
+			var dataArr = data.split(",");
+			commands(dataArr);
+
+		});
+
+
+	}else{
+		console.log("command doesn't exist");
+	}
+
+}
+
+function twitter(){
 	var params = {screen_name: 'liri_bot_1'};
 	client.get('statuses/user_timeline', params, function(error, tweets, response) {
 	  if (!error) {
@@ -33,49 +79,30 @@ if (func_call === "my-tweets"){
 	  	console.log(error);
 	  }
 	});
+}
 
-}else if (func_call === "spotify-this-song"){
-	if(param.length === 4){
-		var track = param[3];
-	
-		spotify.search({ type: 'track', query: track }, function(err, data) {
-		  if (err) {
-		    return console.log('Error occurred: ' + err);
-		  }
-		console.log("Artist: "+data.tracks.items[0].artists[0].name); 
-		console.log("Album: "+data.tracks.items[0].album.name); 
-		console.log("Song: "+data.tracks.items[0].name); 
-		console.log("preview link : "+data.tracks.items[0].preview_url); 
-		});
-	}else{
-		var track = 'The Sign';
-	
-		spotify.search({ type: 'track', query: track }, function(err, data) {
-		  if (err) {
-		    return console.log('Error occurred: ' + err);
-		  }
-		console.log("Artist: "+data.tracks.items[0].artists[0].name); 
-		console.log("Album: "+data.tracks.items[0].album.name); 
-		console.log("Song: "+data.tracks.items[0].name); 
-		console.log("preview link : "+data.tracks.items[0].preview_url); 
-		});
-	}
-	 
-}else if (func_call === "movie-this"){
-	if(param.length === 4){
-		var title = param[3];
-		request('http://www.omdbapi.com/?apikey=trilogy&t='+title, function (error, response, body) {
-		  console.log(body); // Print the HTML for the Google homepage.
-		});
-	}else{
-		var title = 'Mr. Nobody';
-		request('http://www.omdbapi.com/?apikey=trilogy&t='+title, function (error, response, body) {
-		  console.log(body); // Print the HTML for the Google homepage.
-		});
-	}
+function spotify_func(song){
+	spotify.search({ type: 'track', query: song }, function(err, data) {
+	  if (err) {
+	    return console.log('Error occurred: ' + err);
+	  }
+	console.log("Artist: "+data.tracks.items[0].artists[0].name); 
+	console.log("Album: "+data.tracks.items[0].album.name); 
+	console.log("Song: "+data.tracks.items[0].name); 
+	console.log("preview link : "+data.tracks.items[0].preview_url); 
+	});
 
-}else if (func_call === "do-what-it-says"){
+}
 
-}else{
-
+function movie(movie){
+	request('http://www.omdbapi.com/?apikey=trilogy&t='+movie, function (error, response, body) {
+	  var obj =  JSON.parse(body);
+	  console.log("Title: " +obj.Title);
+	  console.log("Year: " +obj.Year);
+	  console.log("IMDB Rating: " +obj.imdbRating);
+	  console.log("Country it was produced in: " +obj.Country);
+	  console.log("Language: " +obj.Language);
+	  console.log("Plot: " +obj.Plot);
+	  console.log("Actors: " +obj.Actors);
+	});
 }
